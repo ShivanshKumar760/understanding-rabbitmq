@@ -1,0 +1,68 @@
+1.creating a docker file to pull image from docker hub,then configuring the image 
+which will run inside a lightweight docker container with default user and pasword
+and the port the image will run on 
+
+# This Dockerfile sets up a RabbitMQ server with the management plugin enabled.
+FROM rabbitmq:3.13-management
+
+# Set environment variables for default user and password
+ENV RABBITMQ_DEFAULT_USER=admin 
+ENV RABBITMQ_DEFAULT_PASS=admin
+
+# Expose required ports
+# 5672 = AMQP
+# 15672 = Management UI
+EXPOSE 5672 15672
+
+
+# Start RabbitMQ server
+CMD ["rabbitmq-server"]
+
+
+2. building the image (docker build -t docker-rabbitmq .) Note you should be in the same 
+folder as the dockerfile 
+
+
+3.running the container 
+
+docker run -d --name rabbitmq-docker -p 5672:5672 -p 15672:15672 docker-rabbitmq
+
+Syntax is:
+docker run -d --name containerName  -p onlocal:mappedDocker image-name
+
+
+docker run -d \
+  --name rabbitmq-local \
+  -p 5672:5672 \
+  -p 15672:15672 \
+  custom-rabbitmq
+
+
+
+4.Verify docker ps to see the container running with container id 
+
+Open browser:
+
+http://localhost:15672
+
+
+Login:
+
+Username: admin
+Password: admin
+
+Step 5 — Connect From Node App
+amqp.connect("amqp://admin:admin@localhost:5672");
+
+
+
+🚀 Optional (Persistent Data)
+
+If you want messages to survive container restart:
+
+docker run -d \
+  --name rabbitmq-local \
+  -p 5672:5672 \
+  -p 15672:15672 \
+  -v rabbitmq_data:/var/lib/rabbitmq \
+  custom-rabbitmq
